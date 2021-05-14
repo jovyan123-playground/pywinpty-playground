@@ -46,7 +46,7 @@ def test_write(pty_fixture):
 
 def test_isalive(pty_fixture):
     pty = pty_fixture()
-    pty.write('exit\r\n')
+    pty.write('echo \"foo\"\r\nexit\r\n')
     data = ''
 
     while True:
@@ -55,21 +55,21 @@ def test_isalive(pty_fixture):
         except EOFError:
             break
 
-    assert 'exit' in data
+    assert 'foo' in data
     assert not pty.isalive()
     pty.terminate()
 
 
-def test_readline(pty_fixture):
-    env = os.environ.copy()
-    env['foo'] = 'bar'
-    pty = pty_fixture(env=env)
-    pty.write('echo %foo%\r\n')
+# def test_readline(pty_fixture):
+#     env = os.environ.copy()
+#     env['foo'] = 'bar'
+#     pty = pty_fixture(env=env)
+#     pty.write('echo %foo%\r\n')
 
-    while 'bar' not in pty.readline():
-        pass
+#     while 'bar' not in pty.readline():
+#         pass
 
-    pty.terminate()
+#     pty.terminate()
 
 
 def test_close(pty_fixture):
