@@ -340,6 +340,6 @@ def _read_in_thread(address, pty, blocking):
             break
 
         # Sleep to avoid locking
-        time.sleep(1e-6)
+        time.sleep(0.1)
 
     client.close()
