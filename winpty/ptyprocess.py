@@ -324,7 +324,6 @@ def _read_in_thread(address, pty, blocking):
     client.connect(address)
 
     while 1:
-        alive = pty.isalive()
         data = pty.read(4096, blocking=blocking)
 
         try:
@@ -332,7 +331,7 @@ def _read_in_thread(address, pty, blocking):
         except socket.error:
             break
 
-        if not alive:
+        if not pty.isalive():
             try:
                 client.send(b'')
             except socket.error:
