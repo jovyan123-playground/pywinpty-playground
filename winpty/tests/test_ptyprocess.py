@@ -47,15 +47,15 @@ def test_write(pty_fixture):
 def test_isalive(pty_fixture):
     pty = pty_fixture()
     pty.write('exit\r\n')
-
-    text = 'exit'
     data = ''
-    while text not in data:
-        data += pty.read()
 
-    while pty.isalive():
-        continue
+    while True:
+        try:
+            data += pty.read()
+        except EOFError:
+            break
 
+    assert 'exit' in data
     assert not pty.isalive()
     pty.terminate()
 
