@@ -327,11 +327,13 @@ def _read_in_thread(address, pty, blocking):
         data = pty.read(4096, blocking=blocking)
 
         if not data and not pty.isalive():
+            print('\n\n\nGOT NONE')
             while not data and not pty.iseof():
                 data += pty.read(4096, blocking=blocking)
 
             if not data:
                 try:
+                    print('\n\nSENDING EOF MARKER')
                     client.send(b'')
                 except socket.error:
                     pass
