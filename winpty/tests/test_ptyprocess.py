@@ -8,9 +8,12 @@ import time
 import sys
 
 # Third party imports
+import pytest
+from flaky import flaky
+
+# Local imports
 from winpty.enums import Backend
 from winpty.ptyprocess import PtyProcess, which
-import pytest
 
 
 @pytest.fixture(scope='module', params=['ConPTY', 'WinPTY'])
@@ -44,8 +47,10 @@ def test_write(pty_fixture):
     pty.terminate()
 
 
+@flaky(max_runs=6, min_passes=1)
 def test_isalive(pty_fixture):
     pty = pty_fixture()
+
     pty.write('echo \"foo\"\r\nexit\r\n')
     data = ''
 
@@ -60,16 +65,16 @@ def test_isalive(pty_fixture):
     pty.terminate()
 
 
-# def test_readline(pty_fixture):
-#     env = os.environ.copy()
-#     env['foo'] = 'bar'
-#     pty = pty_fixture(env=env)
-#     pty.write('echo %foo%\r\n')
+def test_readline(pty_fixture):
+    env = os.environ.copy()
+    env['foo'] = 'bar'
+    pty = pty_fixture(env=env)
+    pty.write('echo %foo%\r\n')
 
-#     while 'bar' not in pty.readline():
-#         pass
+    while 'bar' not in pty.readline():
+        pass
 
-#     pty.terminate()
+    pty.terminate()
 
 
 def test_close(pty_fixture):
