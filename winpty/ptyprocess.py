@@ -326,20 +326,24 @@ def _read_in_thread(address, pty, blocking):
     while 1:
         data = pty.read(4096, blocking=blocking)
 
-        try:
-            client.send(data)
-        except socket.error:
-            break
-
         if not pty.isalive():
+            while not pty.iseof():
+                data += pty.read(4096, blocking=blocking)
+            
+            try:
+                client.send(data)
+            except socket.error:
+                break
+
             try:
                 client.send(b'')
             except socket.error:
                 pass
-
             break
-
-        # Sleep to avoid locking
-        time.sleep(0.1)
+        
+        try:
+            client.send(data)
+        except socket.error:
+            break
 
     client.close()
