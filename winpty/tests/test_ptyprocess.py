@@ -53,6 +53,7 @@ def test_isalive(pty_fixture):
 
     pty.write('echo \"foo\"\r\nexit\r\n')
     data = ''
+
     while True:
         try:
             data += pty.read()
